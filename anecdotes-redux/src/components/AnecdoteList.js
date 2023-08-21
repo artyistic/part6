@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from "react-redux";
-import { voteAnec } from "../reducers/anecdoteReducer"
-import { setNotification, removeNotification } from "../reducers/notificationReducer";
+import { voteAnecdote } from "../reducers/anecdoteReducer"
+import { setNotification, removeNotification, setNotificationWithTimeout } from "../reducers/notificationReducer";
 const AnecdoteList = () => {
   const anecdotes = useSelector(state => {
     if (state.filter === "")
@@ -9,10 +9,9 @@ const AnecdoteList = () => {
       return state.anecdotes.filter(a => a.content.includes(state.filter))
   })
   const dispatch = useDispatch()
-  const vote = (id, anecdote) => {
-    dispatch(voteAnec(id))
-    dispatch(setNotification(`you voted "${anecdote}"`))
-    setTimeout(() => dispatch(removeNotification()), 5000)
+  const vote = (anecdote) => {
+    dispatch(voteAnecdote(anecdote))
+    dispatch(setNotificationWithTimeout(`you voted '${anecdote.content}'`, 5))
   }
 
   // reassigning is needed to avoid directly mutating the state in redux
@@ -27,7 +26,7 @@ const AnecdoteList = () => {
             </div>
             <div>
               has {anecdote.votes}
-              <button onClick={() => vote(anecdote.id, anecdote.content)}>vote</button>
+              <button onClick={() => vote(anecdote)}>vote</button>
             </div>
           </div>
         )

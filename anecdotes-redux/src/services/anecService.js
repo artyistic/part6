@@ -16,5 +16,10 @@ const newAnec = async (anecdote) => {
   return response.data
 }
 
-const anecService = { getAll, newAnec }
+const modifyAnec = async (id, modifiedAnec) => {
+  const response = await axios.put(`${baseUrl}/${id}`, modifiedAnec)
+  return response.data
+}
+
+const anecService = { getAll, newAnec, modifyAnec }
 export default anecService
