@@ -1,4 +1,3 @@
-import { setNotification, removeNotification } from "../reducers/notificationReducer"
 import { useSelector } from "react-redux"
 
 const Notification = () => {
