@@ -2,7 +2,23 @@ import AnecdoteForm from './components/AnecdoteForm'
 import Notification from './components/Notification'
 import { useQuery, useMutation, useQueryClient } from "react-query"
 import { getAnec, changeAnec } from "./components/requests"
+import { useReducer } from 'react'
+import NotificationContext from './NotifcationContext'
+
+
+const notificationReducer = (state, action) => {
+  switch(action.type) {
+    case "SET":
+      return action.payload
+    case "CLEAR":
+      return ""
+    default:
+      return state
+  }
+}
+
 const App = () => {
+  const [notification, notificationDispatch] = useReducer(notificationReducer, "")
 
 
   const queryClient = useQueryClient()
@@ -15,6 +31,9 @@ const App = () => {
   const handleVote = (anecdote) => {
     console.log('vote', anecdote)
     changeAnecMut.mutate({...anecdote, votes: anecdote.votes + 1})
+    notificationDispatch({ type: "SET", payload: `anecdote "${anecdote.content}" is voted`})
+    setTimeout(() => notificationDispatch({ type: "CLEAR"}), 5000)
+
   }
 
   const result = useQuery(
@@ -36,10 +55,11 @@ const App = () => {
   const anecdotes = result.data
 
   return (
+    <NotificationContext.Provider value={[notification, notificationDispatch]}>
     <div>
       <h3>Anecdote app</h3>
     
-      <Notification />
+      <Notification message={notification}/>
       <AnecdoteForm />
     
       {anecdotes.map(anecdote =>
@@ -54,6 +74,7 @@ const App = () => {
         </div>
       )}
     </div>
+    </NotificationContext.Provider>
   )
 }
 
